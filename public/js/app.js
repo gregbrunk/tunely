@@ -7,9 +7,18 @@
 
 $(document).ready(function() {
   console.log('app.js loaded!');
+  //Populate Album List
   $.get("/api/albums", function(data, status){
         data.forEach(renderAlbum);
-    });
+  });
+
+  //Setup Search Form
+  $("#search-form").submit(function(event){
+    event.preventDefault();
+    var formdata = $(this).serialize();
+    console.log(formdata);
+    $(this).trigger("reset");
+  });
 });
 
 // this function takes a single album and renders it to the page
@@ -57,5 +66,4 @@ function renderAlbum(album) {
 
   // render to the page with jQuery
   $('#albums').append(albumHtml);
-
 }
