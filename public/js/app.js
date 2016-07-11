@@ -24,13 +24,29 @@ $(document).ready(function() {
 
   // Bring Up Add Song Modal
   var id;
-  $('#albums').on('click', '.add-song', function(e) {
+  $('#albums').on('click', '.add-song', function(event) {
     id = $(this).parents('.album').data('album-id');
     $('#songModal').data('album-id', id).modal();
   });
+  
   // Handle Song Save in Modal
   $("#saveSong").on('click', function(event){
     handleNewSongSubmit(event, id);
+  });
+
+  // Handle Song Delete
+  $('#albums').on('click', '.delete-album', function(event) {
+    deleteId = $(this).parents('.album').data('album-id');
+    var albumURL = "/api/albums/" + deleteId;
+    
+    $.ajax({
+      url: albumURL,
+      type: 'DELETE',
+      success: function(result){
+        deleteAlbum(deleteId);
+      }
+
+    });
   });
 });
 
@@ -86,6 +102,7 @@ function renderAlbum(album) {
   "              <div class='panel-footer'>" +
   "                  <div class='panel-footer'>" +
   "                   <button class='btn btn-primary add-song'>Add Song</button>" +
+    "                 <button class='btn btn-primary delete-album'>Delete Album</button>" +
   "                  </div>" +
   "              </div>" +
   "            </div>" +
@@ -119,11 +136,11 @@ function handleNewSongSubmit(event, id) {
   $("#trackNumber").val("");
   // Close Modal
   $('#songModal').modal('toggle');
-  
-  // get data from modal fields - check
-  // POST to SERVER - check
-  // clear form - check
-  // close modal - check
-  // update the correct album to show the new song
 }
 
+// delete an album on frontend
+function deleteAlbum(event, deleteId){
+  var originalAlbum = $("div").find("[data-album-id='" + deleteId + "']");
+  originalAlbum.remove();
+  location.reload();
+}
