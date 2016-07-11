@@ -4,9 +4,14 @@
 var express = require('express');
 // generate a new express app and call it 'app'
 var app = express();
+//require body-parser in our app
+var bodyParser = require('body-parser');
+app.use(bodyParser.urlencoded({ extended: true }));
+app.use(bodyParser.json());
 
 // serve static files from public folder
 app.use(express.static(__dirname + '/public'));
+
 
 /************
  * DATABASE *
@@ -25,11 +30,11 @@ app.get('/', function homepage (req, res) {
   res.sendFile(__dirname + '/views/index.html');
 });
 
-
 /*
  * JSON API Endpoints
  */
 
+//Get API Data
 app.get('/api', function api_index (req, res){
   res.json({
     message: "Welcome to tunely!",
@@ -41,6 +46,7 @@ app.get('/api', function api_index (req, res){
   });
 });
 
+//Get All Album List
 app.get('/api/albums', function album_index(req, res){
   db.Album.find()
       .exec(function(err, albums) {
@@ -48,6 +54,18 @@ app.get('/api/albums', function album_index(req, res){
         return console.log("index error: " + err); 
       }
       res.json(albums);
+  });
+});
+
+//Post New Album
+app.post('/api/albums', function album_add(req, res){
+  var newAlbum = req.body;
+  var newAlbumGenres = newAlbum.genres;
+  var genresArray = newAlbumGenres.split(',');
+  newAlbum.genres = genresArray;
+
+  db.Album.create(newAlbum, function(err, album) {
+    res.json(album);
   });
 });
 

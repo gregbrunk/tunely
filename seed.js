@@ -30,11 +30,46 @@ var albumsList =[
 	}
 ];
 
+var songList = [
+	{ 
+	name: 'Famous',
+	trackNumber: 1
+	},
+	{ 
+	name: "All of the Lights",
+	trackNumber: 2
+	},
+	{ 
+	name: 'Guilt Trip',
+	trackNumber: 3
+	},
+	{ 
+	name: 'Paranoid',
+	trackNumber: 4
+	},
+	{ 
+	name: 'Ultralight Beam',
+	trackNumber: 5
+	},
+	{ 
+	name: 'Runaway',
+	trackNumber: 6
+	},
+	{ 
+	name: 'Stronger',
+	trackNumber: 7
+	}
+];
+
+albumsList.forEach(function(album){
+	album.songs = songList;
+});
+
 db.Album.remove({}, function(err, albums){
-  db.Album.create(albumsList, function(err, albums){
-    if (err) { return console.log('ERROR', err); }
-    console.log("all albums:", albums);
-    console.log("created", albums.length, "albums");
-    process.exit();
-  });
+	db.Album.create(albumsList, function(err, albums){
+		if (err) { return console.log('ERROR', err); }
+		console.log("all albums:", albums);
+		console.log("created", albums.length, "albums");
+		process.exit();
+	});
 });

@@ -16,18 +16,40 @@ $(document).ready(function() {
   $("#search-form").submit(function(event){
     event.preventDefault();
     var formdata = $(this).serialize();
-    console.log(formdata);
+    $.post('/api/albums', formdata, function(res){
+      renderAlbum(res);
+    });
     $(this).trigger("reset");
   });
+
+  // Bring Up Add Song Modal
+  $('#albums').on('click', '.add-song', function(e) {
+    var id = $(this).parents('.album').data('album-id');
+    $('#songModal').data('album-id', id).modal();
+  });
+
+  $("#saveSong").on('click', handleNewSongSubmit);
 });
+
+// build the songlist
+function buildSongsHtml(songs) {
+  var songText = "";
+  songs.forEach(function(song){
+    songText = songText + song.trackNumber + ". " + song.name + " &ndash; ";
+  });
+  var songsHTML =
+      "<li class='list-group-item'>" +
+      "<h4 class='inline-header'>Songs:</h4>" +
+      "<span>" + songText + "</span>" +
+      "</li>";
+  return songsHTML;
+}
 
 // this function takes a single album and renders it to the page
 function renderAlbum(album) {
   console.log('rendering album:', album);
-
   var albumHtml =
-  "        <!-- one album -->" +
-  "        <div class='row album' data-album-id='" + album.artistName + "'>" +
+  "        <div class='row album' data-album-id='" + album._id + "'>" +
   "          <div class='col-md-10 col-md-offset-1'>" +
   "            <div class='panel panel-default'>" +
   "              <div class='panel-body'>" +
@@ -50,6 +72,7 @@ function renderAlbum(album) {
   "                        <h4 class='inline-header'>Released date:</h4>" +
   "                        <span class='album-releaseDate'>" + album.releaseDate + "</span>" +
   "                      </li>" +
+                         buildSongsHtml(album.songs) +
   "                    </ul>" +
   "                  </div>" +
   "                </div>" +
@@ -58,12 +81,30 @@ function renderAlbum(album) {
   "              </div>" + // end of panel-body
 
   "              <div class='panel-footer'>" +
+  "                  <div class='panel-footer'>" +
+  "                   <button class='btn btn-primary add-song'>Add Song</button>" +
+  "                  </div>" +
   "              </div>" +
-
   "            </div>" +
-  "          </div>" +
-  "          <!-- end one album -->";
-
+  "        </div>";
   // render to the page with jQuery
   $('#albums').append(albumHtml);
 }
+
+
+
+// handle song submission
+function handleNewSongSubmit(event) {
+  event.preventDefault();
+  var newSong = {
+    name: $("#songName").val(),
+    trackNumber: parseInt($("#trackNumber").val(), 10)
+  };
+
+  // get data from modal fields
+  // POST to SERVER
+  // clear form
+  // close modal
+  // update the correct album to show the new song
+}
+

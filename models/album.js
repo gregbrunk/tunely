@@ -1,7 +1,9 @@
-var mongoose = require("mongoose");
-var Schema = mongoose.Schema;
+var mongoose = require("mongoose"),
+	Schema = mongoose.Schema,
+	Song = require("./song.js");
 
 var AlbumSchema = new Schema({
+	songs: [ Song ],
 	artistName: String,
 	name: String,
 	releaseDate: String,
