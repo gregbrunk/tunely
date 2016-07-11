@@ -69,6 +69,21 @@ app.post('/api/albums', function album_add(req, res){
   });
 });
 
+//Post New Song
+app.post('/api/albums/:album_id/songs', function song_add(req, res){
+  var newSong = req.body;
+  var albumId = req.params.album_id;
+  db.Album.findById(albumId, function(err, album){
+    album.songs.push(newSong);
+    album.save(function(err, album){
+      if(err){
+        console.log(err);
+      }
+      res.json(album);
+    });
+  });
+});
+
 /**********
  * SERVER *
  **********/

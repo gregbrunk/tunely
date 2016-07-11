@@ -23,12 +23,15 @@ $(document).ready(function() {
   });
 
   // Bring Up Add Song Modal
+  var id;
   $('#albums').on('click', '.add-song', function(e) {
-    var id = $(this).parents('.album').data('album-id');
+    id = $(this).parents('.album').data('album-id');
     $('#songModal').data('album-id', id).modal();
   });
-
-  $("#saveSong").on('click', handleNewSongSubmit);
+  // Handle Song Save in Modal
+  $("#saveSong").on('click', function(event){
+    handleNewSongSubmit(event, id);
+  });
 });
 
 // build the songlist
@@ -91,20 +94,36 @@ function renderAlbum(album) {
   $('#albums').append(albumHtml);
 }
 
-
+function reRenderAlbum(id, data) {
+  var originalAlbum = $("div").find("[data-album-id='" + id + "']");
+  originalAlbum.remove();
+  renderAlbum(data);
+}
 
 // handle song submission
-function handleNewSongSubmit(event) {
+function handleNewSongSubmit(event, id) {
   event.preventDefault();
+  // Build New Song Object
   var newSong = {
     name: $("#songName").val(),
     trackNumber: parseInt($("#trackNumber").val(), 10)
   };
-
-  // get data from modal fields
-  // POST to SERVER
-  // clear form
-  // close modal
+  // Build URL
+  var albumURL = "/api/albums/" + id + "/songs";
+  // Post to Server
+  $.post(albumURL, newSong, function(res){
+    reRenderAlbum(id, res);
+  });
+  // Clear values
+  $("#songName").val("");
+  $("#trackNumber").val("");
+  // Close Modal
+  $('#songModal').modal('toggle');
+  
+  // get data from modal fields - check
+  // POST to SERVER - check
+  // clear form - check
+  // close modal - check
   // update the correct album to show the new song
 }
 
